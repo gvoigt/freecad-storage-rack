@@ -1,0 +1,94 @@
+import Part
+from FreeCAD import Base
+
+doc = App.newDocument('test')
+
+class Storage_Rack():
+	"""\n This class shall be used .... \n"""
+
+	def __init__(self, rack_width, rack_height, rack_depth, wood_thickness, num_shelves):
+		self.width     = rack_width
+		self.height    = rack_height
+		self.depth	   = rack_depth 
+		self.thickness = wood_thickness
+		self.shelves   = num_shelves
+
+		self.create_rack()
+
+	def create_rack(self):
+		self.bottom_shelf = self.create_board(self.width, self.depth, self.thickness)
+		self.top_shelf = self.bottom_shelf.mirror(Base.Vector(0,0,self.height/2), Base.Vector(0,0,1))
+
+		self.left_side = self.create_board(self.height, self.depth, self.thickness)
+		(self.left_side).rotate(Base.Vector(0,0,0),Base.Vector(0,1,0),270)
+		(self.left_side).rotate(Base.Vector(0,self.depth/2,0), Base.Vector(0,0,1),180)
+
+		self.right_side = (self.left_side).mirror(Base.Vector(self.width/2, 0,0), Base.Vector(1,0,0))
+
+		self.shelf = Part.makeBox(self.width-2*self.thickness, self.depth, self.thickness)
+		(self.shelf).Placement.Base = Base.Vector(self.thickness, 0, (self.height-self.thickness)/2)
+
+		# create dowels (4 pieces)
+
+		dowel_length = 20
+		dowel_radius = 4
+		drill_length    = dowel_length + 4
+
+		dowel = Part.makeCylinder(dowel_radius,dowel_length,Base.Vector(0,0,0),Base.Vector(1,0,0), 360)
+		dowel = dowel.makeChamfer(1,[dowel.Edge1,dowel.Edge3])
+		dowel.Placement.Base = Base.Vector(self.thickness-dowel_length/2, 50, (self.height)/2)
+		dowel2 = dowel.mirror(Base.Vector(0,self.depth/2,0), Base.Vector(0,1,0))
+		dowel = dowel.fuse(dowel2)
+		dowel2 = dowel.mirror(Base.Vector(self.width/2,0,0), Base.Vector(1,0,0))
+		dowel = dowel.fuse(dowel2)
+		self.dowel = dowel 
+
+		# drill for the dowels
+		drill = Part.makeCylinder(dowel_radius,drill_length,Base.Vector(0,0,0),Base.Vector(1,0,0), 360)
+		drill.Placement.Base = Base.Vector(self.thickness-drill_length/2, 50, (self.height)/2)
+		drill2 = drill.mirror(Base.Vector(0,self.depth/2,0), Base.Vector(0,1,0))
+		drill = drill.fuse(drill2)
+		drill2 = drill.mirror(Base.Vector(self.width/2,0,0), Base.Vector(1,0,0))
+		drill = drill.fuse(drill2)
+
+		self.left_side = (self.left_side).cut(drill)
+		self.right_side = (self.right_side).cut(drill)
+		self.shelf = (self.shelf).cut(drill)
+
+#Class Shelf():
+
+#	def __init__(self, shelf_width, shelf_height, shelf_depth, shelf_thickness):
+#		self.width     = shelf_width
+#		self.height    = shelf_height
+#		self.depth	   = shelf_depth 
+#		self.thickness = shelf_thickness
+
+
+	def create_board(self, board_width, board_depth, board_thickness):
+		board = Part.makeBox(board_width, board_depth, board_thickness)
+
+		V1 = Base.Vector(0,0,0)
+		V2 = Base.Vector(0,0,board_thickness)
+		V3 = Base.Vector(board_thickness,0,board_thickness)
+		miter_left = Part.makePolygon([ V1,V2,V3,V1])
+		miter_left = Part.Face(miter_left)
+		miter_left = miter_left.extrude(Base.Vector(0,board_depth,0))
+
+		miter_right = miter_left.mirror(Base.Vector(board_width/2,0,0), Base.Vector(1,0,0))
+
+		miter = miter_left.fuse(miter_right)
+
+		return board.cut(miter)		
+
+new_rack = Storage_Rack(1500,500,300,18,2)
+
+doc.addObject("Part::Feature","Bottom Shelf").Shape = new_rack.bottom_shelf
+doc.addObject("Part::Feature","Top Shelf").Shape = new_rack.top_shelf
+doc.addObject("Part::Feature","Left Side").Shape = new_rack.left_side
+doc.addObject("Part::Feature","Right Side").Shape = new_rack.right_side
+doc.addObject("Part::Feature","Shelf").Shape = new_rack.shelf
+doc.addObject("Part::Feature","Dowel").Shape = new_rack.dowel
+
+Gui.SendMsgToActiveView("ViewFit")
+Gui.ActiveDocument.ActiveView.setAxisCross(True)
+Gui.activeDocument().activeView().viewAxometric()
