@@ -1,7 +1,7 @@
 import Part
 from FreeCAD import Base
 
-doc = App.newDocument('test')
+doc = App.newDocument('Storage Rack')
 
 class Storage_Rack():
 	"""\n This class shall be used .... \n"""
@@ -16,17 +16,18 @@ class Storage_Rack():
 		self.create_rack()
 
 	def create_rack(self):
-		self.bottom_shelf = self.create_board(self.width, self.depth, self.thickness)
-		self.top_shelf = self.bottom_shelf.mirror(Base.Vector(0,0,self.height/2), Base.Vector(0,0,1))
+		self.parts = {}
+		self.parts['bottom shelf'] = self.create_board(self.width, self.depth, self.thickness)
+		self.parts['top shelf'] = self.parts['bottom shelf'].mirror(Base.Vector(0,0,self.height/2), Base.Vector(0,0,1))
 
-		self.left_side = self.create_board(self.height, self.depth, self.thickness)
-		(self.left_side).rotate(Base.Vector(0,0,0),Base.Vector(0,1,0),270)
-		(self.left_side).rotate(Base.Vector(0,self.depth/2,0), Base.Vector(0,0,1),180)
+		self.parts['left side'] = self.create_board(self.height, self.depth, self.thickness)
+		self.parts['left side'].rotate(Base.Vector(0,0,0),Base.Vector(0,1,0),270)
+		self.parts['left side'].rotate(Base.Vector(0,self.depth/2,0), Base.Vector(0,0,1),180)
 
-		self.right_side = (self.left_side).mirror(Base.Vector(self.width/2, 0,0), Base.Vector(1,0,0))
+		self.parts['right side'] = self.parts['left side'].mirror(Base.Vector(self.width/2, 0,0), Base.Vector(1,0,0))
 
-		self.shelf = Part.makeBox(self.width-2*self.thickness, self.depth, self.thickness)
-		(self.shelf).Placement.Base = Base.Vector(self.thickness, 0, (self.height-self.thickness)/2)
+		self.parts['shelf'] = Part.makeBox(self.width-2*self.thickness, self.depth, self.thickness)
+		self.parts['shelf'].Placement.Base = Base.Vector(self.thickness, 0, (self.height-self.thickness)/2)
 
 		# create dowels (4 pieces)
 
@@ -41,7 +42,7 @@ class Storage_Rack():
 		dowel = dowel.fuse(dowel2)
 		dowel2 = dowel.mirror(Base.Vector(self.width/2,0,0), Base.Vector(1,0,0))
 		dowel = dowel.fuse(dowel2)
-		self.dowel = dowel 
+		self.parts['dowel'] = dowel 
 
 		# drill for the dowels
 		drill = Part.makeCylinder(dowel_radius,drill_length,Base.Vector(0,0,0),Base.Vector(1,0,0), 360)
@@ -51,9 +52,9 @@ class Storage_Rack():
 		drill2 = drill.mirror(Base.Vector(self.width/2,0,0), Base.Vector(1,0,0))
 		drill = drill.fuse(drill2)
 
-		self.left_side = (self.left_side).cut(drill)
-		self.right_side = (self.right_side).cut(drill)
-		self.shelf = (self.shelf).cut(drill)
+		self.parts['left side'] = self.parts['left side'].cut(drill)
+		self.parts['right side'] = self.parts['right side'].cut(drill)
+		self.parts['shelf'] = self.parts['shelf'].cut(drill)
 
 #Class Shelf():
 
@@ -82,12 +83,10 @@ class Storage_Rack():
 
 new_rack = Storage_Rack(1500,500,300,18,2)
 
-doc.addObject("Part::Feature","Bottom Shelf").Shape = new_rack.bottom_shelf
-doc.addObject("Part::Feature","Top Shelf").Shape = new_rack.top_shelf
-doc.addObject("Part::Feature","Left Side").Shape = new_rack.left_side
-doc.addObject("Part::Feature","Right Side").Shape = new_rack.right_side
-doc.addObject("Part::Feature","Shelf").Shape = new_rack.shelf
-doc.addObject("Part::Feature","Dowel").Shape = new_rack.dowel
+for key in new_rack.parts:
+	print(key)
+	doc.addObject("Part::Feature",key).Shape = new_rack.parts[key]	
+
 
 Gui.SendMsgToActiveView("ViewFit")
 Gui.ActiveDocument.ActiveView.setAxisCross(True)
