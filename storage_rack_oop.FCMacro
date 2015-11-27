@@ -56,14 +56,6 @@ class Storage_Rack():
 		self.parts['right side'] = self.parts['right side'].cut(drill)
 		self.parts['shelf'] = self.parts['shelf'].cut(drill)
 
-#Class Shelf():
-
-#	def __init__(self, shelf_width, shelf_height, shelf_depth, shelf_thickness):
-#		self.width     = shelf_width
-#		self.height    = shelf_height
-#		self.depth	   = shelf_depth 
-#		self.thickness = shelf_thickness
-
 
 	def create_board(self, board_width, board_depth, board_thickness):
 		board = Part.makeBox(board_width, board_depth, board_thickness)
@@ -84,7 +76,6 @@ class Storage_Rack():
 new_rack = Storage_Rack(1500,500,300,18,2)
 
 for key in new_rack.parts:
-	print(key)
 	doc.addObject("Part::Feature",key).Shape = new_rack.parts[key]	
 
 
