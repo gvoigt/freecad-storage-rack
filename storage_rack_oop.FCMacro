@@ -87,14 +87,35 @@ class Storage_Rack():
 			original_pos = self.parts[key].Placement.Base
 			self.parts[key].Placement.Base = Base.Vector(move_x, move_y, move_z) + original_pos
 
-new_rack = Storage_Rack(1500,500,300,18,2)
-new_rack.move_board(150,-50,100)
 
-for key in new_rack.parts:
-	doc.addObject("Part::Feature",key).Shape = new_rack.parts[key]	
+class Work_Surface():
+	"""  \n"""
+	
+	def __init__(self, wood_thickness):
+		self.left_width = 1020
+		self.left_depth = 605
+		self.thickness	= wood_thickness
+		
+		self.parts_left = {}
+		self.parts_left['top'] = self.create_top_left()
+		
+	def create_top_left(self):
+		top_left = Part.makeBox(self.left_width, self.left_depth, self.thickness)
+		return top_left
+		
+		
+#~ new_rack = Storage_Rack(1500,500,300,18,2)
+#~ new_rack.move_board(150,-50,100)
 
-print(new_rack.parts['right side'].Placement.Base)
+#~ for key in new_rack.parts:
+	#~ doc.addObject("Part::Feature",key).Shape = new_rack.parts[key]	
 
+#~ print(new_rack.parts['right side'].Placement.Base)
+
+surface= Work_Surface(18)
+
+for key in surface.parts_left:
+	doc.addObject("Part::Feature",key).Shape = surface.parts_left[key]	
 
 Gui.SendMsgToActiveView("ViewFit")
 Gui.ActiveDocument.ActiveView.setAxisCross(True)
