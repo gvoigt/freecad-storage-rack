@@ -100,16 +100,37 @@ class Work_Surface():
 		self.parts_left['top'] = self.create_top_left()
 		
 	def create_top_left(self):
-		top_left = Part.makeBox(self.left_width, self.left_depth, self.thickness)
+		plain_board = Part.makeBox(self.left_width, self.left_depth, self.thickness)
 		
-		V1 = top_left.Vertex2.Point
-		V2 = top_left.Vertex4.Point
+		V1 = plain_board.Vertex2.Point
+		V2 = plain_board.Vertex4.Point
 		V3 = V2 + Base.Vector(560,0,0)
 		cut_edge = Part.makePolygon([ V1,V2,V3,V1])		
 		cut_edge = Part.Face(cut_edge)
 		cut_edge = cut_edge.extrude(Base.Vector(0,0,self.thickness))
 		
-		top_left = top_left.cut(cut_edge)
+		
+		
+		V4 = V2 + Base.Vector(0,-250,0)
+		V5 = V4 + Base.Vector(437.5,0,0)
+		V6 = V5 + Base.Vector(0,-35,0)
+		V7 = V4 + Base.Vector(0,-35,0)
+		
+		VC1 = V5 + Base.Vector(17.5,-17.5,0)
+		
+		L1 = Part.Line(V4,V5)
+		C1 = Part.Arc(V5,VC1,V6)
+		L2 = Part.Line(V6,V7)
+		L3 = Part.Line(V7,V4)
+		
+		S1 = Part.Shape([C1,L1,L2,L3])
+
+		opening = Part.Wire(S1.Edges)
+		opening = Part.Face(opening)
+		opening = opening.extrude(Base.Vector(0,0,self.thickness))
+		
+		top_left = plain_board.cut(cut_edge)
+		top_left = top_left.cut(opening)
 		
 		return top_left
 		
