@@ -101,6 +101,16 @@ class Work_Surface():
 		
 	def create_top_left(self):
 		top_left = Part.makeBox(self.left_width, self.left_depth, self.thickness)
+		
+		V1 = top_left.Vertex2.Point
+		V2 = top_left.Vertex4.Point
+		V3 = V2 + Base.Vector(560,0,0)
+		cut_edge = Part.makePolygon([ V1,V2,V3,V1])		
+		cut_edge = Part.Face(cut_edge)
+		cut_edge = cut_edge.extrude(Base.Vector(0,0,self.thickness))
+		
+		top_left = top_left.cut(cut_edge)
+		
 		return top_left
 		
 		
