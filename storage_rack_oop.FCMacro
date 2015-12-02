@@ -91,16 +91,21 @@ class Storage_Rack():
 class Work_Surface():
 	"""  \n"""
 	
-	def __init__(self, wood_thickness):
+	def __init__(self, wood_thickness, blinds_width):
 		self.left_width = 1020
-		self.left_depth = 605
+		self.depth = 605
 		self.thickness	= wood_thickness
+		self.blind_width = blinds_width
 		
 		self.parts_left = {}
 		self.parts_left['top'] = self.create_top_left()
 		
+		self.make_blinds_left()
+		
+		self.parts_left['top'].Placement.Base = Base.Vector(0,0,self.thickness)
+		
 	def create_top_left(self):
-		plain_board = Part.makeBox(self.left_width, self.left_depth, self.thickness)
+		plain_board = Part.makeBox(self.left_width, self.depth, self.thickness)
 		
 		V1 = plain_board.Vertex2.Point
 		V2 = plain_board.Vertex4.Point
@@ -134,6 +139,28 @@ class Work_Surface():
 		
 		return top_left
 		
+	def make_blinds_left(self):
+		blind_front = Part.makeBox(self.left_width, self.blind_width, self.thickness)
+		blind_front = blind_front.common(self.parts_left['top'])
+		
+		V1 = blind_front.Vertex2.Point
+		V2 = blind_front.Vertex6.Point
+		V3 = V2 + Base.Vector(-self.blind_width,0,0)
+		
+		miter = Part.makePolygon([ V1,V2,V3,V1])		
+		miter = Part.Face(miter)
+		miter = miter.extrude(Base.Vector(0,0,self.thickness))
+		
+		blind_front = blind_front.cut(miter)
+		
+		self.parts_left['blind front'] = blind_front
+		
+		blind_side = Part.makeBox(self.blind_width, self.depth, self.thickness)
+		blind_side.Placement.Base = Base.Vector(self.left_width-self.blind_width, 0,0)
+		blind_side = blind_side.cut(blind_front)
+		
+		self.parts_left['blind side'] = blind_side
+		
 		
 #~ new_rack = Storage_Rack(1500,500,300,18,2)
 #~ new_rack.move_board(150,-50,100)
@@ -143,7 +170,7 @@ class Work_Surface():
 
 #~ print(new_rack.parts['right side'].Placement.Base)
 
-surface= Work_Surface(18)
+surface= Work_Surface(18,50)
 
 for key in surface.parts_left:
 	doc.addObject("Part::Feature",key).Shape = surface.parts_left[key]	
