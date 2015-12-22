@@ -167,6 +167,8 @@ class Work_Surface():
 		self.parts_left['blind side'] = blind_side
 		
 	def make_blinds_top(self, blinds_height):
+		
+		# Top 1
 		V1 = self.parts_left['top'].Vertex3.Point
 		V2 = self.parts_left['top'].Vertex11.Point
 		alpha = np.arctan(560/605)
@@ -179,6 +181,28 @@ class Work_Surface():
 		self.parts_left['blind_top1'] = blind_top1.extrude(Base.Vector(0,0,blinds_height))
 		
 		
+		# Top 2
+		V1 = self.parts_left['top'].Vertex16.Point
+		V2 = self.parts_left['top'].Vertex13.Point
+		V4 = V4 = V1 + Base.Vector(move_x,0,0)
+		
+		gamma = (np.pi-alpha)/2
+		move_x = self.thickness/np.tan(gamma)
+		V3 = V2 + Base.Vector(move_x, -self.thickness, 0)
+		
+		blind_top2 = Part.makePolygon([V1,V2,V3,V4,V1])
+		blind_top2 = Part.Face(blind_top2)
+		self.parts_left['blind_top2'] = blind_top2.extrude(Base.Vector(0,0,blinds_height))
+		
+		# Top 3
+		V1 = V2
+		V4 = V3
+		V2 = self.parts_left['top'].Vertex12.Point
+		V3 = V2 + Base.Vector(0,-self.thickness,0)
+		
+		blind_top3 = Part.makePolygon([V1,V2,V3,V4,V1])
+		blind_top3 = Part.Face(blind_top3)
+		self.parts_left['blind_top3'] = blind_top3.extrude(Base.Vector(0,0,blinds_height))
 		
 	def move_parts(self, parts, move_x, move_y, move_z):
 		for key in parts:
