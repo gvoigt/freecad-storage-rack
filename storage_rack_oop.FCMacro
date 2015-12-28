@@ -92,25 +92,42 @@ class Storage_Rack():
 class Work_Surface():
 	"""  \n"""
 	
-	def __init__(self, wood_thickness, blinds_width, blinds_height, surface_underside):
+	def __init__(self, wood_thickness, blinds_depth, blinds_height, surface_underside):
+		""" """
 		self.left_width 	  = 1020
-		self.depth 			  = 605
+		self.oven_width		  = 515
+		self.total_width	  = 2770
+		self.right_width	  = self.total_width - self.left_width - self.oven_width
+		self.depth 			  = 605		# depth of the work surface
 		self.thickness		  = wood_thickness
-		self.blind_width 	  = blinds_width
+		self.blind_depth 	  = blinds_depth	# for blinds below work surface
 		self.underside_height = surface_underside
 		
 		self.parts_left = {}
 		self.parts_left['top'] = self.create_top_left()
 		
-		self.make_blinds_left()
+		self.parts_right = {}
+		self.parts_right['top'] = Part.makeBox(self.right_width, self.depth, self.thickness)
+		
+		self.make_blinds()
 		
 		self.parts_left['top'].Placement.Base = Base.Vector(0,0,self.thickness)
 		self.move_parts(self.parts_left,0,0,self.underside_height)
 		
+		self.parts_right['top'].Placement.Base = Base.Vector(0,0,self.thickness)
+		self.move_parts(self.parts_right,self.left_width + self.oven_width,0,self.underside_height)
+		
+		
 		self.make_blinds_top(blinds_height)
+		
+		
+		
+		
 		
 	def create_top_left(self):
 		plain_board = Part.makeBox(self.left_width, self.depth, self.thickness)
+		
+		# corner cut
 		
 		V1 = plain_board.Vertex2.Point
 		V2 = plain_board.Vertex4.Point
@@ -120,6 +137,7 @@ class Work_Surface():
 		cut_edge = cut_edge.extrude(Base.Vector(0,0,self.thickness))
 		
 		
+		# gas pipe cut
 		
 		V4 = V2 + Base.Vector(0,-250,0)
 		V5 = V4 + Base.Vector(437.5,0,0)
@@ -144,27 +162,52 @@ class Work_Surface():
 		
 		return top_left
 		
-	def make_blinds_left(self):
-		blind_front = Part.makeBox(self.left_width, self.blind_width, self.thickness)
+	def make_blinds(self):
+		""" Make underside blinds for work surface left and right """
+		
+		def create_miter(Vertex1, Vertex2, Vertex3):
+			miter = Part.makePolygon([ Vertex1,Vertex2,Vertex3,Vertex1])		
+			miter = Part.Face(miter)
+			miter = miter.extrude(Base.Vector(0,0,self.thickness))
+			
+			return miter
+			
+		
+		# left side
+		blind_front = Part.makeBox(self.left_width, self.blind_depth, self.thickness)
 		blind_front = blind_front.common(self.parts_left['top'])
 		
 		V1 = blind_front.Vertex2.Point
 		V2 = blind_front.Vertex6.Point
-		V3 = V2 + Base.Vector(-self.blind_width,0,0)
+		V3 = V2 + Base.Vector(-self.blind_depth,0,0)
 		
-		miter = Part.makePolygon([ V1,V2,V3,V1])		
-		miter = Part.Face(miter)
-		miter = miter.extrude(Base.Vector(0,0,self.thickness))
 		
-		blind_front = blind_front.cut(miter)
+		blind_front = blind_front.cut(create_miter(V1,V2,V3))
 		
 		self.parts_left['blind front'] = blind_front
 		
-		blind_side = Part.makeBox(self.blind_width, self.depth, self.thickness)
-		blind_side.Placement.Base = Base.Vector(self.left_width-self.blind_width, 0,0)
+		blind_side = Part.makeBox(self.blind_depth, self.depth, self.thickness)
+		blind_side.Placement.Base = Base.Vector(self.left_width-self.blind_depth, 0,0)
 		blind_side = blind_side.cut(blind_front)
 		
 		self.parts_left['blind side'] = blind_side
+		
+		# right side
+		blind_front = Part.makeBox(self.right_width, self.blind_depth, self.thickness)
+		self.parts_right['blind front'] = blind_front
+		
+		V1 = blind_front.Vertex2.Point
+		V2 = blind_front.Vertex4.Point
+		V3 = V2 + Base.Vector(self.blind_depth,0,0)
+		
+		blind_front = blind_front.cut(create_miter(V1,V2,V3))
+		self.parts_right['blind front'] = blind_front
+		
+		blind_side = Part.makeBox(self.blind_depth, self.depth, self.thickness)
+		blind_side = blind_side.cut(blind_front)
+		
+		self.parts_right['blind side'] = blind_side
+		
 		
 	def make_blinds_top(self, blinds_height):
 		
@@ -225,6 +268,10 @@ surface= Work_Surface(18,50,30, 825)
 
 for key in surface.parts_left:
 	doc.addObject("Part::Feature",key).Shape = surface.parts_left[key]	
+
+
+for key in surface.parts_right:
+	doc.addObject("Part::Feature",key).Shape = surface.parts_right[key]
 
 Gui.SendMsgToActiveView("ViewFit")
 Gui.ActiveDocument.ActiveView.setAxisCross(True)
