@@ -120,6 +120,7 @@ class Work_Surface():
 		
 		self.make_blinds_top(blinds_height)
 		
+		self.make_supports()
 		
 		
 		
@@ -246,6 +247,38 @@ class Work_Surface():
 		blind_top3 = Part.makePolygon([V1,V2,V3,V4,V1])
 		blind_top3 = Part.Face(blind_top3)
 		self.parts_left['blind_top3'] = blind_top3.extrude(Base.Vector(0,0,blinds_height))
+		
+		# Top 4 (right work surface)
+		V1 = self.parts_right['top'].Vertex3.Point
+		V2 = self.parts_right['top'].Vertex7.Point
+		V3 = V2 + Base.Vector(-self.thickness, -self.thickness, 0)
+		V4 = V1 + Base.Vector(0,-self.thickness,0)
+		
+		blind_top4 = Part.makePolygon([V1,V2,V3,V4,V1])
+		blind_top4 = Part.Face(blind_top4)
+		self.parts_right['blind_top4'] = blind_top4.extrude(Base.Vector(0,0,blinds_height))
+		
+		
+		# Top 5 (right works surface)
+		V1 = V2
+		V2 = self.parts_right['top'].Vertex5.Point
+		V4 = V3
+		V3 = V2 + Base.Vector(-self.thickness, 0, 0)
+		
+		blind_top5 = Part.makePolygon([V1,V2,V3,V4,V1])
+		blind_top5 = Part.Face(blind_top5)
+		self.parts_right['blind_top5'] = blind_top5.extrude(Base.Vector(0,0,blinds_height))
+		
+	def make_supports(self):
+		self.pos_support1 = self.parts_left['top'].Vertex2.Point + Base.Vector(-(self.blind_depth + 30), (self.blind_depth + 30),0)
+		
+		self.pos_support2 = self.parts_right['top'].Vertex2.Point + Base.Vector((self.blind_depth + 30), (self.blind_depth + 30),0)
+		
+		self.pos_support3 = self.parts_right['top'].Vertex6.Point + Base.Vector(-(self.blind_depth + 30), (self.blind_depth + 30),0)
+		
+		self.parts_left['support1'] = Part.makeBox(self.thickness, self.thickness, self.underside_height, self.pos_support1, Base.Vector(0,0,-1))
+		self.parts_right['support2'] = Part.makeBox(self.thickness, self.thickness, self.underside_height, self.pos_support2 + Base.Vector(self.thickness, 0,0), Base.Vector(0,0,-1))
+		self.parts_right['support3'] = Part.makeBox(self.thickness, self.thickness, self.underside_height, self.pos_support3, Base.Vector(0,0,-1))
 		
 	def move_parts(self, parts, move_x, move_y, move_z):
 		for key in parts:
