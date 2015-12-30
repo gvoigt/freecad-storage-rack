@@ -89,6 +89,9 @@ class Storage_Rack():
 			self.parts[key].Placement.Base = Base.Vector(move_x, move_y, move_z) + original_pos
 
 
+
+
+
 class Work_Surface():
 	"""  \n"""
 	
@@ -121,6 +124,8 @@ class Work_Surface():
 		self.make_blinds_top(blinds_height)
 		
 		self.make_supports()
+		
+		self.parts_right['shelf'] = self.create_shelf()
 		
 		
 		
@@ -279,6 +284,19 @@ class Work_Surface():
 		self.parts_left['support1'] = Part.makeBox(self.thickness, self.thickness, self.underside_height, self.pos_support1, Base.Vector(0,0,-1))
 		self.parts_right['support2'] = Part.makeBox(self.thickness, self.thickness, self.underside_height, self.pos_support2 + Base.Vector(self.thickness, 0,0), Base.Vector(0,0,-1))
 		self.parts_right['support3'] = Part.makeBox(self.thickness, self.thickness, self.underside_height, self.pos_support3, Base.Vector(0,0,-1))
+				
+		
+	def create_shelf(self):
+		shelf_width = self.pos_support3[0]-self.pos_support2[0]
+		shelf_depth = self.depth - self.pos_support2[1]
+		shelf_height = self.underside_height / 2
+		
+		shelf = Part.makeBox(shelf_width, shelf_depth, self.thickness, Base.Vector(self.pos_support2[0], self.pos_support2[1], shelf_height)) 
+		shelf = shelf.cut(self.parts_right['support2'])
+		shelf = shelf.cut(self.parts_right['support3'])
+		
+		return shelf
+		
 		
 	def move_parts(self, parts, move_x, move_y, move_z):
 		for key in parts:
