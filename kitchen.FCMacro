@@ -28,6 +28,21 @@ for key in surface.parts_left:
 for key in surface.parts_right:
 	doc.addObject("Part::Feature",key).Shape = surface.parts_right[key]
 
+
+
+
+rack_keys = ['bottom shelf', 'top shelf', 'right side','left side']
+rack_fusion = new_rack.parts[rack_keys[0]]
+for i in rack_keys[1:]:
+	rack_fusion = rack_fusion.fuse(new_rack.parts[i])
+
+doc.addObject("Part::Feature","complete rack").Shape = rack_fusion
+
+
+
+
+
+
 Gui.SendMsgToActiveView("ViewFit")
 Gui.ActiveDocument.ActiveView.setAxisCross(True)
 Gui.activeDocument().activeView().viewAxometric()
