@@ -1,0 +1,33 @@
+from work_surface import *
+from storage_rack import *
+
+doc = App.newDocument('Kitchen')
+
+surface= Work_Surface(18,50,30, 825)
+
+rackWidth     = 1500
+rackHeight    = 350
+rackDepth     = 300
+woodThickness = 18
+shelfNumber   = 0
+
+rackOffsetX = 560 + (2210 - rackWidth)/2
+rackOffsetY = surface.depth - rackDepth
+rackOffsetZ = 1600
+
+new_rack = Storage_Rack(rackWidth, rackHeight,rackDepth,woodThickness,shelfNumber)
+new_rack.move_board(rackOffsetX,rackOffsetY, rackOffsetZ)
+
+for key in new_rack.parts:
+	doc.addObject("Part::Feature",key).Shape = new_rack.parts[key]	
+
+for key in surface.parts_left:
+	doc.addObject("Part::Feature",key).Shape = surface.parts_left[key]	
+
+
+for key in surface.parts_right:
+	doc.addObject("Part::Feature",key).Shape = surface.parts_right[key]
+
+Gui.SendMsgToActiveView("ViewFit")
+Gui.ActiveDocument.ActiveView.setAxisCross(True)
+Gui.activeDocument().activeView().viewAxometric()
