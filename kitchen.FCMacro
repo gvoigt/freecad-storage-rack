@@ -115,3 +115,45 @@ for i in range(len(Views)):
 doc.recompute()
 Gui.activeDocument().getObject("Page2").show()
 
+
+
+""" Drawing for right work surface """
+
+surface_right_fusion = surface.parts_right['top']
+for key in surface.parts_right:
+	if (key != 'top'):
+		surface_right_fusion = surface_right_fusion.fuse(surface.parts_right[key])
+
+doc.addObject("Part::Feature","work surface right").Shape = surface_right_fusion
+
+
+doc.addObject('Drawing::FeaturePage','Page3')
+doc.Page3.Template = App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
+#~ doc.Page3.Template = App.getResourceDir()+'Mod/Drawing/Templates/A0_Landscape_ISO7200.svg'
+
+doc.addObject('Drawing::FeatureViewPart','ViewY3')
+doc.addObject('Drawing::FeatureViewPart','ViewZ3Top')
+doc.addObject('Drawing::FeatureViewPart','ViewZ3Bottom')
+doc.addObject('Drawing::FeatureViewPart','ViewIso3')
+
+Views 		   = [ doc.ViewY3, doc.ViewZ3Top, doc.ViewZ3Bottom, doc.ViewIso3] 
+ViewsDirection = [   (0,-1,0),       (0,0,1),     (0,0,-1),     (1,-1,0.5)]
+ViewsX		   = [   -280.0,        -280.0,       -280.0,         170.0]
+ViewsY		   = [    340.0,         140.0,        350.0, 		  150.0]
+ViewsScale     = [		0.2,		   0.2,          0.2,			0.1]
+ViewsRotation  = [     90.0,           0.0,        180.0,		  180.0]
+ViewsHiddenL   = [     True,		  True,    		True,		   True]
+
+for i in range(len(Views)):
+	Views[i].Source	   = doc.work_surface_right
+	Views[i].Direction = ViewsDirection[i]
+	Views[i].X         = ViewsX[i]
+	Views[i].Y         = ViewsY[i]
+	Views[i].Scale     = ViewsScale[i]
+	Views[i].Rotation  = ViewsRotation[i]
+	Views[i].ShowHiddenLines = ViewsHiddenL[i] 
+
+	doc.Page3.addObject(Views[i])
+
+doc.recompute()
+Gui.activeDocument().getObject("Page3").show()
