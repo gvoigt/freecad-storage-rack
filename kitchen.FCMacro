@@ -32,7 +32,7 @@ Gui.SendMsgToActiveView("ViewFit")
 Gui.ActiveDocument.ActiveView.setAxisCross(True)
 Gui.activeDocument().activeView().viewAxometric()
 
-
+""" Drawing for storage Rack"""
 
 rack_keys = ['bottom shelf', 'top shelf', 'right side','left side']
 rack_fusion = new_rack.parts[rack_keys[0]]
@@ -42,33 +42,33 @@ for i in rack_keys[1:]:
 doc.addObject("Part::Feature","complete rack").Shape = rack_fusion
 
 doc.addObject('Drawing::FeaturePage','Page')
-doc.Page.Template = App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape.svg'
+doc.Page.Template = App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
+#~ doc.Page.Template = App.getResourceDir()+'Mod/Drawing/Templates/A0_Landscape_plain.svg'
 
-doc.addObject('Drawing::FeatureViewPart','View')
-doc.View.Source = doc.complete_rack
-doc.View.Direction = (0.0,0.0,1.0)
-doc.View.X = 150.0
-doc.View.Y = 150.0
-doc.View.Scale = 0.1
-doc.View.ShowHiddenLines = True
-doc.Page.addObject(doc.View)
-
-
+doc.addObject('Drawing::FeatureViewPart','ViewX')
+doc.addObject('Drawing::FeatureViewPart','ViewY')
+doc.addObject('Drawing::FeatureViewPart','ViewZ')
 doc.addObject('Drawing::FeatureViewPart','ViewIso')
-doc.ViewIso.Source = doc.complete_rack
-doc.ViewIso.Direction = (1.0,1.0,1.0)
-doc.ViewIso.X = 335.0
-doc.ViewIso.Y = 140.0
-doc.ViewIso.Scale = 0.1
-doc.ViewIso.ShowHiddenLines = True
-doc.Page.addObject(doc.ViewIso)
 
 
-doc.View.X = 150.0
-doc.View.Y = 100.0
+Views 		   = [ doc.ViewX,     doc.ViewY,     doc.ViewZ,    doc.ViewIso] 
+ViewsDirection = [(1.0,0.0,0.0), (0.0,1.0,.0), (0.0,0.0,1.0), (1.0,-1.0,0.5)]
+ViewsX		   = [    460.0,        -160.0,       -160.0,         -25.0]
+ViewsY		   = [   -295.0, 		-295.0,        240.0, 		  375.0]
+ViewsScale     = [		0.2,		   0.2,          0.2,			0.1]
+ViewsRotation  = [     90.0,          90.0,          0.0,		  180.0]
+ViewsHiddenL   = [     True,		  True,    		True,		   True]
+
+for i in range(len(Views)):
+	Views[i].Source	   = doc.complete_rack
+	Views[i].Direction = ViewsDirection[i]
+	Views[i].X         = ViewsX[i]
+	Views[i].Y         = ViewsY[i]
+	Views[i].Scale     = ViewsScale[i]
+	Views[i].Rotation  = ViewsRotation[i]
+	Views[i].ShowHiddenLines = ViewsHiddenL[i] 
+
+	doc.Page.addObject(Views[i])
 
 doc.recompute()
-
-
-
 Gui.activeDocument().getObject("Page").show()
