@@ -28,6 +28,9 @@ for key in surface.parts_left:
 for key in surface.parts_right:
 	doc.addObject("Part::Feature",key).Shape = surface.parts_right[key]
 
+Gui.SendMsgToActiveView("ViewFit")
+Gui.ActiveDocument.ActiveView.setAxisCross(True)
+Gui.activeDocument().activeView().viewAxometric()
 
 
 
@@ -38,11 +41,34 @@ for i in rack_keys[1:]:
 
 doc.addObject("Part::Feature","complete rack").Shape = rack_fusion
 
+doc.addObject('Drawing::FeaturePage','Page')
+doc.Page.Template = App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape.svg'
+
+doc.addObject('Drawing::FeatureViewPart','View')
+doc.View.Source = doc.complete_rack
+doc.View.Direction = (0.0,0.0,1.0)
+doc.View.X = 150.0
+doc.View.Y = 150.0
+doc.View.Scale = 0.1
+doc.View.ShowHiddenLines = True
+doc.Page.addObject(doc.View)
+
+
+doc.addObject('Drawing::FeatureViewPart','ViewIso')
+doc.ViewIso.Source = doc.complete_rack
+doc.ViewIso.Direction = (1.0,1.0,1.0)
+doc.ViewIso.X = 335.0
+doc.ViewIso.Y = 140.0
+doc.ViewIso.Scale = 0.1
+doc.ViewIso.ShowHiddenLines = True
+doc.Page.addObject(doc.ViewIso)
+
+
+doc.View.X = 150.0
+doc.View.Y = 100.0
+
+doc.recompute()
 
 
 
-
-
-Gui.SendMsgToActiveView("ViewFit")
-Gui.ActiveDocument.ActiveView.setAxisCross(True)
-Gui.activeDocument().activeView().viewAxometric()
+Gui.activeDocument().getObject("Page").show()
