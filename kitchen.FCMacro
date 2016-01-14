@@ -43,7 +43,7 @@ doc.addObject("Part::Feature","complete rack").Shape = rack_fusion
 
 doc.addObject('Drawing::FeaturePage','Page')
 doc.Page.Template = App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
-#~ doc.Page.Template = App.getResourceDir()+'Mod/Drawing/Templates/A0_Landscape_plain.svg'
+#~ doc.Page.Template = App.getResourceDir()+'Mod/Drawing/Templates/A0_Landscape_ISO7200.svg'
 
 doc.addObject('Drawing::FeatureViewPart','ViewX')
 doc.addObject('Drawing::FeatureViewPart','ViewY')
@@ -72,3 +72,46 @@ for i in range(len(Views)):
 
 doc.recompute()
 Gui.activeDocument().getObject("Page").show()
+
+
+""" Drawing for left work surface """
+
+surface_left_fusion = surface.parts_left['top']
+for key in surface.parts_left:
+	if (key != 'top'):
+		surface_left_fusion = surface_left_fusion.fuse(surface.parts_left[key])
+
+doc.addObject("Part::Feature","work surface left").Shape = surface_left_fusion
+
+
+doc.addObject('Drawing::FeaturePage','Page2')
+doc.Page2.Template = App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
+#~ doc.Page2.Template = App.getResourceDir()+'Mod/Drawing/Templates/A0_Landscape_ISO7200.svg'
+
+doc.addObject('Drawing::FeatureViewPart','ViewY2')
+doc.addObject('Drawing::FeatureViewPart','ViewZ2Top')
+doc.addObject('Drawing::FeatureViewPart','ViewZ2Bottom')
+doc.addObject('Drawing::FeatureViewPart','ViewIso2')
+
+Views 		   = [ doc.ViewY2, doc.ViewZ2Top, doc.ViewZ2Bottom, doc.ViewIso2] 
+ViewsDirection = [   (0,-1,0),       (0,0,1),     (0,0,-1),     (1,-1,0.5)]
+ViewsX		   = [     30.0,          30.0,         30.0,         275.0]
+ViewsY		   = [    350.0,         150.0,        350.0, 		  175.0]
+ViewsScale     = [		0.2,		   0.2,          0.2,			0.1]
+ViewsRotation  = [     90.0,           0.0,        180.0,		  180.0]
+ViewsHiddenL   = [     True,		  True,    		True,		   True]
+
+for i in range(len(Views)):
+	Views[i].Source	   = doc.work_surface_left
+	Views[i].Direction = ViewsDirection[i]
+	Views[i].X         = ViewsX[i]
+	Views[i].Y         = ViewsY[i]
+	Views[i].Scale     = ViewsScale[i]
+	Views[i].Rotation  = ViewsRotation[i]
+	Views[i].ShowHiddenLines = ViewsHiddenL[i] 
+
+	doc.Page2.addObject(Views[i])
+
+doc.recompute()
+Gui.activeDocument().getObject("Page2").show()
+
