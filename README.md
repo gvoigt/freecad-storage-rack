@@ -1,3 +1,6 @@
 # freecad-storage-rack
 
-The storage rack FCMacro was only tested on FreeCAD versoin 0.15
+The kitchen FCMacro was only tested on FreeCAD version 0.15
+
+
+The main file is kitchen.py which you have to call from within FreeCAD. 
