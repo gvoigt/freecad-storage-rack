@@ -59,9 +59,9 @@ doc.addObject('Drawing::FeatureViewPart','ViewIso')
 
 
 Views 		   = [ doc.ViewX,     doc.ViewY,     doc.ViewZ,    doc.ViewIso] 
-ViewsDirection = [(1.0,0.0,0.0), (0.0,1.0,.0), (0.0,0.0,1.0), (1.0,-1.0,0.5)]
+ViewsDirection = [(-1.0,0.0,0.0), (0.0,-1.0,.0), (0.0,0.0,1.0), (1.0,-1.0,0.5)]
 ViewsX		   = [    460.0,        -160.0,       -160.0,         -25.0]
-ViewsY		   = [   -295.0, 		-295.0,        240.0, 		  375.0]
+ViewsY		   = [    415.0, 		 415.0,        240.0, 		  375.0]
 ViewsScale     = [		0.2,		   0.2,          0.2,			0.1]
 ViewsRotation  = [     90.0,          90.0,          0.0,		  180.0]
 ViewsHiddenL   = [     True,		  True,    		True,		   True]
