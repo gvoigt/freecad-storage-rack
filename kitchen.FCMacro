@@ -1,5 +1,6 @@
 from work_surface import *
 from storage_rack import *
+import os.path
 
 doc = App.newDocument('Kitchen')
 
@@ -44,8 +45,12 @@ for i in rack_keys[1:]:
 doc.addObject("Part::Feature","complete rack").Shape = rack_fusion
 
 doc.addObject('Drawing::FeaturePage','Page')
-doc.Page.Template = App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
-#~ doc.Page.Template = App.getResourceDir()+'Mod/Drawing/Templates/A0_Landscape_ISO7200.svg'
+
+pathDrawingTemplate = '/home/sam/programmierung/FreeCAD/A3_Landscape_ISO7200_storage_rack.svg'
+if !os.path.isfile(pathDrawingTemplate):
+	pathDrawingTemplate =  App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
+
+doc.Page.Template = pathDrawingTemplate
 
 doc.addObject('Drawing::FeatureViewPart','ViewX')
 doc.addObject('Drawing::FeatureViewPart','ViewY')
@@ -87,8 +92,12 @@ doc.addObject("Part::Feature","work surface left").Shape = surface_left_fusion
 
 
 doc.addObject('Drawing::FeaturePage','Page2')
-doc.Page2.Template = App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
-#~ doc.Page2.Template = App.getResourceDir()+'Mod/Drawing/Templates/A0_Landscape_ISO7200.svg'
+
+pathDrawingTemplate = '/home/sam/programmierung/FreeCAD/A3_Landscape_ISO7200_worksurface_left.svg'
+if !os.path.isfile(pathDrawingTemplate):
+	pathDrawingTemplate =  App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
+
+doc.Page2.Template = pathDrawingTemplate
 
 doc.addObject('Drawing::FeatureViewPart','ViewY2')
 doc.addObject('Drawing::FeatureViewPart','ViewZ2Top')
@@ -130,8 +139,12 @@ doc.addObject("Part::Feature","work surface right").Shape = surface_right_fusion
 
 
 doc.addObject('Drawing::FeaturePage','Page3')
-doc.Page3.Template = App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
-#~ doc.Page3.Template = App.getResourceDir()+'Mod/Drawing/Templates/A0_Landscape_ISO7200.svg'
+
+pathDrawingTemplate = '/home/sam/programmierung/FreeCAD/A3_Landscape_ISO7200_worksurface_right.svg'
+if !os.path.isfile(pathDrawingTemplate):
+	pathDrawingTemplate =  App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
+
+doc.Page3.Template = pathDrawingTemplate
 
 doc.addObject('Drawing::FeatureViewPart','ViewY3')
 doc.addObject('Drawing::FeatureViewPart','ViewZ3Top')
