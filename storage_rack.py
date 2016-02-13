@@ -21,12 +21,41 @@ class Storage_Rack():
 		self.parts['top shelf'] = self.parts['bottom shelf'].mirror(Base.Vector(0,0,self.height/2), Base.Vector(0,0,1))
 
 		self.parts['left side'] = self.create_board(self.height, self.depth, self.thickness)
+		self.make_notch()
 		self.parts['left side'].rotate(Base.Vector(0,0,0),Base.Vector(0,1,0),270)
 		self.parts['left side'].rotate(Base.Vector(0,self.depth/2,0), Base.Vector(0,0,1),180)
 
 		self.parts['right side'] = self.parts['left side'].mirror(Base.Vector(self.width/2, 0,0), Base.Vector(1,0,0))
 		
 		self.make_shelves()
+	
+	def make_notch(self):
+		notch_length = 30
+		notch_width  = 15
+		notch_depth  = 4
+		
+		V1 = Base.Vector(3./4*self.height - (notch_length - notch_width)/2., 0, self.thickness/2. -notch_width/2.)
+		V2 = V1 + Base.Vector(0,0,notch_width)
+		V3 = V2 + Base.Vector(notch_length-notch_width, 0,0)
+		V4 = V1 + Base.Vector(notch_length-notch_width, 0,0)
+		
+		VC1 = V1 + Base.Vector(-notch_width/2.,0, notch_width/2.)
+		VC2 = V4 + Base.Vector(notch_width/2.,0, notch_width/2.)
+		
+		L1 = Part.Line(V1,V4)
+		C1 = Part.Arc(V1,VC1,V2)
+		L2 = Part.Line(V2,V3)
+		C2 = Part.Arc(V3,VC2,V4)
+		
+		
+		S1 = Part.Shape([C1,C2,L1,L2])
+
+		notch = Part.Wire(S1.Edges)
+		notch = Part.Face(notch)
+		notch = notch.extrude(Base.Vector(0,notch_depth,0))
+		
+		#~ self.parts['notch'] = notch
+		self.parts['left side'] = self.parts['left side'].cut(notch)
 		
 	def make_shelves(self):
 		
