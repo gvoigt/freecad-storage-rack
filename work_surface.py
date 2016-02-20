@@ -35,7 +35,7 @@ class Work_Surface():
 		
 		self.make_supports()
 		
-		self.parts_right['shelf'] = self.create_shelf()
+		self.make_surfaceShelves()
 		
 		
 		
@@ -185,28 +185,51 @@ class Work_Surface():
 		self.parts_right['blind_top5'] = blind_top5.extrude(Base.Vector(0,0,blinds_height))
 		
 	def make_supports(self):
+		
+		support_length = self.underside_height + self.thickness
+		supportMini_length = self.underside_height/2.
+		
 		self.pos_support1 = self.parts_left['top'].Vertex2.Point + Base.Vector(-(self.blind_depth + 30), (self.blind_depth + 30),0)
 		
 		self.pos_support2 = self.parts_right['top'].Vertex2.Point + Base.Vector((self.blind_depth + 30), (self.blind_depth + 30),0)
 		
 		self.pos_support3 = self.parts_right['top'].Vertex6.Point + Base.Vector(-(self.blind_depth + 30), (self.blind_depth + 30),0)
 		
-		self.parts_left['support1'] = Part.makeBox(self.thickness, self.thickness, self.underside_height, self.pos_support1, Base.Vector(0,0,-1))
-		self.parts_right['support2'] = Part.makeBox(self.thickness, self.thickness, self.underside_height, self.pos_support2 + Base.Vector(self.thickness, 0,0), Base.Vector(0,0,-1))
-		self.parts_right['support3'] = Part.makeBox(self.thickness, self.thickness, self.underside_height, self.pos_support3, Base.Vector(0,0,-1))
+		self.parts_left['support1'] = Part.makeBox(self.thickness, self.thickness, support_length, self.pos_support1, Base.Vector(0,0,-1))
+		self.parts_right['support2'] = Part.makeBox(self.thickness, self.thickness, support_length, self.pos_support2 + Base.Vector(self.thickness, 0,0), Base.Vector(0,0,-1))
+		self.parts_right['support3'] = Part.makeBox(self.thickness, self.thickness, support_length, self.pos_support3, Base.Vector(0,0,-1))
 				
+		self.pos_supportMini1 = Base.Vector(self.parts_left['top'].Vertex2.Point[0] - (460-self.thickness), self.pos_support1[1], supportMini_length)
+		self.pos_supportMini2 = Base.Vector(self.pos_support3[0] - (475 - self.thickness), self.pos_support3[1], supportMini_length)
 		
-	def create_shelf(self):
-		shelf_width = self.pos_support3[0]-self.pos_support2[0]
-		shelf_depth = self.depth - self.pos_support2[1]
-		shelf_height = self.underside_height / 2
+		self.parts_left['supportMini1'] = Part.makeBox(self.thickness, self.thickness, supportMini_length, self.pos_supportMini1, Base.Vector(0,0,-1))
+		self.parts_right['supportMini2'] = Part.makeBox(self.thickness, self.thickness, supportMini_length, self.pos_supportMini2, Base.Vector(0,0,-1))
 		
-		shelf = Part.makeBox(shelf_width, shelf_depth, self.thickness, Base.Vector(self.pos_support2[0], self.pos_support2[1], shelf_height)) 
-		shelf = shelf.cut(self.parts_right['support2'])
+		
+	def make_surfaceShelves(self):
+		
+		# shelf for left work surface
+		
+		shelf_width = self.pos_support1[0]-self.pos_supportMini1[0]+self.thickness
+		shelf_depth = self.depth - self.pos_support1[1]
+		shelf_height = self.underside_height / 2.
+		
+		shelf = Part.makeBox(shelf_width, shelf_depth, self.thickness, self.pos_supportMini1 + Base.Vector(-self.thickness, 0, 0)) 
+		shelf = shelf.cut(self.parts_left['support1'])
+		
+		self.parts_left['shelf'] = shelf
+		
+		
+		# shelf for right work surface
+		
+		shelf_width = self.pos_support3[0]-self.pos_supportMini2[0]+self.thickness
+		shelf_depth = self.depth - self.pos_support3[1]
+		shelf_height = self.underside_height / 2.
+		
+		shelf = Part.makeBox(shelf_width, shelf_depth, self.thickness, self.pos_supportMini2 + Base.Vector(-self.thickness, 0, 0)) 
 		shelf = shelf.cut(self.parts_right['support3'])
 		
-		return shelf
-		
+		self.parts_right['shelf'] = shelf
 		
 	def move_parts(self, parts, move_x, move_y, move_z):
 		for key in parts:
