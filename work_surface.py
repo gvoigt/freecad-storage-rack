@@ -130,8 +130,8 @@ class Work_Surface():
 		# Top 1
 		V1 = self.parts_left['top'].Vertex3.Point
 		V2 = self.parts_left['top'].Vertex11.Point
-		alpha = np.arctan(560/605)
-		move_x = self.thickness/np.cos(alpha)
+		alpha = np.arctan(605./560)
+		move_x = self.thickness/np.sin(alpha)
 		V3 = V2 + Base.Vector(move_x,0,0)
 		V4 = V1 + Base.Vector(move_x,0,0)
 		
@@ -143,7 +143,7 @@ class Work_Surface():
 		# Top 2
 		V1 = self.parts_left['top'].Vertex16.Point
 		V2 = self.parts_left['top'].Vertex13.Point
-		V4 = V4 = V1 + Base.Vector(move_x,0,0)
+		V4 = V1 + Base.Vector(move_x,0,0)
 		
 		gamma = (np.pi-alpha)/2
 		move_x = self.thickness/np.tan(gamma)

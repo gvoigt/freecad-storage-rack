@@ -2,8 +2,6 @@ from work_surface import *
 from storage_rack import *
 import os.path
 
-reload(work_surface)
-reload(storage_rack)
 
 doc = App.newDocument('Kitchen')
 
