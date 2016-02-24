@@ -1,13 +1,15 @@
-from work_surface import *
-from storage_rack import *
+import work_surface as ws
+import storage_rack as sr
 import os.path
 
+reload(ws)
+reload(sr)
 
 doc = App.newDocument('Kitchen')
 
 woodThickness = 21
 
-surface= Work_Surface(woodThickness,50,30, 829)
+surface= ws.Work_Surface(woodThickness,50,30, 829)
 
 rackWidth     = 1500
 rackHeight    = 350
@@ -15,11 +17,11 @@ rackDepth     = 300
 
 shelfNumber   = 0
 
-rackOffsetX = 560 + (2210 - rackWidth)/2
+rackOffsetX = 560 + (2210 - rackWidth)/2.
 rackOffsetY = surface.depth - rackDepth
 rackOffsetZ = 1600
 
-new_rack = Storage_Rack(rackWidth, rackHeight,rackDepth,woodThickness,shelfNumber)
+new_rack = sr.Storage_Rack(rackWidth, rackHeight,rackDepth,woodThickness,shelfNumber)
 new_rack.move_board(rackOffsetX,rackOffsetY, rackOffsetZ)
 
 for key in new_rack.parts:

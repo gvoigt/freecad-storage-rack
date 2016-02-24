@@ -145,7 +145,7 @@ class Work_Surface():
 		V2 = self.parts_left['top'].Vertex13.Point
 		V4 = V1 + Base.Vector(move_x,0,0)
 		
-		gamma = (np.pi-alpha)/2
+		gamma = (np.pi-alpha)/2.
 		move_x = self.thickness/np.tan(gamma)
 		V3 = V2 + Base.Vector(move_x, -self.thickness, 0)
 		
