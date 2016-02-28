@@ -11,9 +11,9 @@ woodThickness = 21
 
 surface= ws.Work_Surface(woodThickness,50,30, 829)
 
-rackWidth     = 1500
-rackHeight    = 350
-rackDepth     = 300
+rackWidth     = 1700
+rackHeight    = 325
+rackDepth     = 280
 
 shelfNumber   = 0
 
@@ -63,7 +63,7 @@ doc.addObject('Drawing::FeatureViewPart','ViewIso')
 
 Views 		   = [ doc.ViewX,     doc.ViewY,     doc.ViewZ,    doc.ViewIso] 
 ViewsDirection = [(-1.0,0.0,0.0), (0.0,-1.0,.0), (0.0,0.0,1.0), (1.0,-1.0,0.5)]
-ViewsX		   = [    460.0,        -160.0,       -160.0,         -25.0]
+ViewsX		   = [    470.0,        -160.0,       -160.0,         -25.0]
 ViewsY		   = [    415.0, 		 415.0,        240.0, 		  375.0]
 ViewsScale     = [		0.2,		   0.2,          0.2,			0.1]
 ViewsRotation  = [     90.0,          90.0,          0.0,		  180.0]
