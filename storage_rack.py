@@ -4,115 +4,115 @@ import numpy as np
 
 
 class Storage_Rack():
-	"""\n This class shall be used .... \n"""
+    """\n This class shall be used .... \n"""
 
-	def __init__(self, rack_width, rack_height, rack_depth, wood_thickness, num_shelves):
-		self.width     = rack_width
-		self.height    = rack_height
-		self.depth	   = rack_depth 
-		self.thickness = wood_thickness
-		self.shelves   = num_shelves
+    def __init__(self, rack_width, rack_height, rack_depth, wood_thickness, num_shelves):
+        self.width     = rack_width
+        self.height    = rack_height
+        self.depth     = rack_depth 
+        self.thickness = wood_thickness
+        self.shelves   = num_shelves
 
-		self.create_rack()
+        self.create_rack()
 
-	def create_rack(self):
-		self.parts = {}
-		self.parts['bottom shelf'] = self.create_board(self.width, self.depth, self.thickness)
-		self.parts['top shelf'] = self.parts['bottom shelf'].mirror(Base.Vector(0,0,self.height/2.), Base.Vector(0,0,1))
+    def create_rack(self):
+        self.parts = {}
+        self.parts['bottom shelf'] = self.create_board(self.width, self.depth, self.thickness)
+        self.parts['top shelf'] = self.parts['bottom shelf'].mirror(Base.Vector(0,0,self.height/2.), Base.Vector(0,0,1))
 
-		self.parts['left side'] = self.create_board(self.height, self.depth, self.thickness)
-		self.make_notch()
-		self.parts['left side'].rotate(Base.Vector(0,0,0),Base.Vector(0,1,0),270)
-		self.parts['left side'].rotate(Base.Vector(0,self.depth/2.,0), Base.Vector(0,0,1),180)
+        self.parts['left side'] = self.create_board(self.height, self.depth, self.thickness)
+        self.make_notch()
+        self.parts['left side'].rotate(Base.Vector(0,0,0),Base.Vector(0,1,0),270)
+        self.parts['left side'].rotate(Base.Vector(0,self.depth/2.,0), Base.Vector(0,0,1),180)
 
-		self.parts['right side'] = self.parts['left side'].mirror(Base.Vector(self.width/2., 0,0), Base.Vector(1,0,0))
-		
-		self.make_shelves()
-	
-	def make_notch(self):
-		notch_length = 30
-		notch_width  = 15
-		notch_depth  = 4
-		
-		V1 = Base.Vector(3./4*self.height - (notch_length - notch_width)/2., 0, self.thickness/2. -notch_width/2.)
-		V2 = V1 + Base.Vector(0,0,notch_width)
-		V3 = V2 + Base.Vector(notch_length-notch_width, 0,0)
-		V4 = V1 + Base.Vector(notch_length-notch_width, 0,0)
-		
-		VC1 = V1 + Base.Vector(-notch_width/2.,0, notch_width/2.)
-		VC2 = V4 + Base.Vector(notch_width/2.,0, notch_width/2.)
-		
-		L1 = Part.Line(V1,V4)
-		C1 = Part.Arc(V1,VC1,V2)
-		L2 = Part.Line(V2,V3)
-		C2 = Part.Arc(V3,VC2,V4)
-		
-		
-		S1 = Part.Shape([C1,C2,L1,L2])
+        self.parts['right side'] = self.parts['left side'].mirror(Base.Vector(self.width/2., 0,0), Base.Vector(1,0,0))
+        
+        self.make_shelves()
+    
+    def make_notch(self):
+        notch_length = 30
+        notch_width  = 15
+        notch_depth  = 4
+        
+        V1 = Base.Vector(3./4*self.height - (notch_length - notch_width)/2., 0, self.thickness/2. -notch_width/2.)
+        V2 = V1 + Base.Vector(0,0,notch_width)
+        V3 = V2 + Base.Vector(notch_length-notch_width, 0,0)
+        V4 = V1 + Base.Vector(notch_length-notch_width, 0,0)
+        
+        VC1 = V1 + Base.Vector(-notch_width/2.,0, notch_width/2.)
+        VC2 = V4 + Base.Vector(notch_width/2.,0, notch_width/2.)
+        
+        L1 = Part.Line(V1,V4)
+        C1 = Part.Arc(V1,VC1,V2)
+        L2 = Part.Line(V2,V3)
+        C2 = Part.Arc(V3,VC2,V4)
+        
+        
+        S1 = Part.Shape([C1,C2,L1,L2])
 
-		notch = Part.Wire(S1.Edges)
-		notch = Part.Face(notch)
-		notch = notch.extrude(Base.Vector(0,notch_depth,0))
-		
-		#~ self.parts['notch'] = notch
-		self.parts['left side'] = self.parts['left side'].cut(notch)
-		
-	def make_shelves(self):
-		
-		if self.shelves >= 1:
-			for i in range(1,self.shelves+1):
-				shelf_name = 'shelf '+str(i)
-				dowel_name = 'dowel '+str(i)
-				move_z = i*self.height/(self.shelves+1)
-				self.parts[shelf_name] = Part.makeBox(self.width-2.*self.thickness, self.depth, self.thickness)
-				self.parts[shelf_name].Placement.Base = Base.Vector(self.thickness, 0, move_z-self.thickness/2.)
+        notch = Part.Wire(S1.Edges)
+        notch = Part.Face(notch)
+        notch = notch.extrude(Base.Vector(0,notch_depth,0))
+        
+        #~ self.parts['notch'] = notch
+        self.parts['left side'] = self.parts['left side'].cut(notch)
+        
+    def make_shelves(self):
+        
+        if self.shelves >= 1:
+            for i in range(1,self.shelves+1):
+                shelf_name = 'shelf '+str(i)
+                dowel_name = 'dowel '+str(i)
+                move_z = i*self.height/(self.shelves+1)
+                self.parts[shelf_name] = Part.makeBox(self.width-2.*self.thickness, self.depth, self.thickness)
+                self.parts[shelf_name].Placement.Base = Base.Vector(self.thickness, 0, move_z-self.thickness/2.)
 
-				# create dowels (4 pieces)
+                # create dowels (4 pieces)
 
-				dowel_length = 20
-				dowel_radius = 4
-				drill_length = dowel_length + 4
+                dowel_length = 20
+                dowel_radius = 4
+                drill_length = dowel_length + 4
 
-				dowel = Part.makeCylinder(dowel_radius,dowel_length,Base.Vector(0,0,0),Base.Vector(1,0,0), 360)
-				dowel = dowel.makeChamfer(1,[dowel.Edge1,dowel.Edge3])
-				dowel.Placement.Base = Base.Vector(self.thickness-dowel_length/2., 50, move_z)
-				dowel2 = dowel.mirror(Base.Vector(0,self.depth/2.,0), Base.Vector(0,1,0))
-				dowel = dowel.fuse(dowel2)
-				dowel2 = dowel.mirror(Base.Vector(self.width/2.,0,0), Base.Vector(1,0,0))
-				dowel = dowel.fuse(dowel2)
-				self.parts[dowel_name] = dowel 
+                dowel = Part.makeCylinder(dowel_radius,dowel_length,Base.Vector(0,0,0),Base.Vector(1,0,0), 360)
+                dowel = dowel.makeChamfer(1,[dowel.Edge1,dowel.Edge3])
+                dowel.Placement.Base = Base.Vector(self.thickness-dowel_length/2., 50, move_z)
+                dowel2 = dowel.mirror(Base.Vector(0,self.depth/2.,0), Base.Vector(0,1,0))
+                dowel = dowel.fuse(dowel2)
+                dowel2 = dowel.mirror(Base.Vector(self.width/2.,0,0), Base.Vector(1,0,0))
+                dowel = dowel.fuse(dowel2)
+                self.parts[dowel_name] = dowel 
 
-				# drill for the dowels
-				drill = Part.makeCylinder(dowel_radius,drill_length,Base.Vector(0,0,0),Base.Vector(1,0,0), 360)
-				drill.Placement.Base = Base.Vector(self.thickness-drill_length/2., 50, move_z)
-				drill2 = drill.mirror(Base.Vector(0,self.depth/2.,0), Base.Vector(0,1,0))
-				drill = drill.fuse(drill2)
-				drill2 = drill.mirror(Base.Vector(self.width/2.,0,0), Base.Vector(1,0,0))
-				drill = drill.fuse(drill2)
+                # drill for the dowels
+                drill = Part.makeCylinder(dowel_radius,drill_length,Base.Vector(0,0,0),Base.Vector(1,0,0), 360)
+                drill.Placement.Base = Base.Vector(self.thickness-drill_length/2., 50, move_z)
+                drill2 = drill.mirror(Base.Vector(0,self.depth/2.,0), Base.Vector(0,1,0))
+                drill = drill.fuse(drill2)
+                drill2 = drill.mirror(Base.Vector(self.width/2.,0,0), Base.Vector(1,0,0))
+                drill = drill.fuse(drill2)
 
-				self.parts['left side'] = self.parts['left side'].cut(drill)
-				self.parts['right side'] = self.parts['right side'].cut(drill)
-				self.parts[shelf_name] = self.parts[shelf_name].cut(drill)
+                self.parts['left side'] = self.parts['left side'].cut(drill)
+                self.parts['right side'] = self.parts['right side'].cut(drill)
+                self.parts[shelf_name] = self.parts[shelf_name].cut(drill)
 
 
-	def create_board(self, board_width, board_depth, board_thickness):
-		board = Part.makeBox(board_width, board_depth, board_thickness)
+    def create_board(self, board_width, board_depth, board_thickness):
+        board = Part.makeBox(board_width, board_depth, board_thickness)
 
-		V1 = Base.Vector(0,0,0)
-		V2 = Base.Vector(0,0,board_thickness)
-		V3 = Base.Vector(board_thickness,0,board_thickness)
-		miter_left = Part.makePolygon([ V1,V2,V3,V1])
-		miter_left = Part.Face(miter_left)
-		miter_left = miter_left.extrude(Base.Vector(0,board_depth,0))
+        V1 = Base.Vector(0,0,0)
+        V2 = Base.Vector(0,0,board_thickness)
+        V3 = Base.Vector(board_thickness,0,board_thickness)
+        miter_left = Part.makePolygon([ V1,V2,V3,V1])
+        miter_left = Part.Face(miter_left)
+        miter_left = miter_left.extrude(Base.Vector(0,board_depth,0))
 
-		miter_right = miter_left.mirror(Base.Vector(board_width/2.,0,0), Base.Vector(1,0,0))
+        miter_right = miter_left.mirror(Base.Vector(board_width/2.,0,0), Base.Vector(1,0,0))
 
-		miter = miter_left.fuse(miter_right)
+        miter = miter_left.fuse(miter_right)
 
-		return board.cut(miter)
-		
-	def move_board(self, move_x, move_y, move_z):
-		for key in self.parts:
-			original_pos = self.parts[key].Placement.Base
-			self.parts[key].Placement.Base = Base.Vector(move_x, move_y, move_z) + original_pos
+        return board.cut(miter)
+        
+    def move_board(self, move_x, move_y, move_z):
+        for key in self.parts:
+            original_pos = self.parts[key].Placement.Base
+            self.parts[key].Placement.Base = Base.Vector(move_x, move_y, move_z) + original_pos
 

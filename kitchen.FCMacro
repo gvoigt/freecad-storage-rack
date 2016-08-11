@@ -25,14 +25,14 @@ new_rack = sr.Storage_Rack(rackWidth, rackHeight,rackDepth,woodThickness,shelfNu
 new_rack.move_board(rackOffsetX,rackOffsetY, rackOffsetZ)
 
 for key in new_rack.parts:
-	doc.addObject("Part::Feature",key).Shape = new_rack.parts[key]	
+    doc.addObject("Part::Feature",key).Shape = new_rack.parts[key]  
 
 for key in surface.parts_left:
-	doc.addObject("Part::Feature",key).Shape = surface.parts_left[key]	
+    doc.addObject("Part::Feature",key).Shape = surface.parts_left[key]  
 
 
 for key in surface.parts_right:
-	doc.addObject("Part::Feature",key).Shape = surface.parts_right[key]
+    doc.addObject("Part::Feature",key).Shape = surface.parts_right[key]
 
 Gui.SendMsgToActiveView("ViewFit")
 Gui.ActiveDocument.ActiveView.setAxisCross(True)
@@ -43,7 +43,7 @@ Gui.activeDocument().activeView().viewAxometric()
 rack_keys = ['bottom shelf', 'top shelf', 'right side','left side']
 rack_fusion = new_rack.parts[rack_keys[0]]
 for i in rack_keys[1:]:
-	rack_fusion = rack_fusion.fuse(new_rack.parts[i])
+    rack_fusion = rack_fusion.fuse(new_rack.parts[i])
 
 doc.addObject("Part::Feature","complete rack").Shape = rack_fusion
 
@@ -51,7 +51,7 @@ doc.addObject('Drawing::FeaturePage','Page')
 
 pathDrawingTemplate = '/home/sam/programmierung/FreeCAD/A3_Landscape_ISO7200_storage_rack.svg'
 if !os.path.isfile(pathDrawingTemplate):
-	pathDrawingTemplate =  App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
+    pathDrawingTemplate =  App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
 
 doc.Page.Template = pathDrawingTemplate
 
@@ -61,24 +61,24 @@ doc.addObject('Drawing::FeatureViewPart','ViewZ')
 doc.addObject('Drawing::FeatureViewPart','ViewIso')
 
 
-Views 		   = [ doc.ViewX,     doc.ViewY,     doc.ViewZ,    doc.ViewIso] 
+Views          = [ doc.ViewX,     doc.ViewY,     doc.ViewZ,    doc.ViewIso] 
 ViewsDirection = [(-1.0,0.0,0.0), (0.0,-1.0,.0), (0.0,0.0,1.0), (1.0,-1.0,0.5)]
-ViewsX		   = [    470.0,        -160.0,       -160.0,         -25.0]
-ViewsY		   = [    415.0, 		 415.0,        240.0, 		  375.0]
-ViewsScale     = [		0.2,		   0.2,          0.2,			0.1]
-ViewsRotation  = [     90.0,          90.0,          0.0,		  180.0]
-ViewsHiddenL   = [     True,		  True,    		True,		   True]
+ViewsX         = [    470.0,        -160.0,       -160.0,         -25.0]
+ViewsY         = [    415.0,         415.0,        240.0,         375.0]
+ViewsScale     = [      0.2,           0.2,          0.2,           0.1]
+ViewsRotation  = [     90.0,          90.0,          0.0,         180.0]
+ViewsHiddenL   = [     True,          True,         True,          True]
 
 for i in range(len(Views)):
-	Views[i].Source	   = doc.complete_rack
-	Views[i].Direction = ViewsDirection[i]
-	Views[i].X         = ViewsX[i]
-	Views[i].Y         = ViewsY[i]
-	Views[i].Scale     = ViewsScale[i]
-	Views[i].Rotation  = ViewsRotation[i]
-	Views[i].ShowHiddenLines = ViewsHiddenL[i] 
+    Views[i].Source    = doc.complete_rack
+    Views[i].Direction = ViewsDirection[i]
+    Views[i].X         = ViewsX[i]
+    Views[i].Y         = ViewsY[i]
+    Views[i].Scale     = ViewsScale[i]
+    Views[i].Rotation  = ViewsRotation[i]
+    Views[i].ShowHiddenLines = ViewsHiddenL[i] 
 
-	doc.Page.addObject(Views[i])
+    doc.Page.addObject(Views[i])
 
 doc.recompute()
 Gui.activeDocument().getObject("Page").show()
@@ -88,8 +88,8 @@ Gui.activeDocument().getObject("Page").show()
 
 surface_left_fusion = surface.parts_left['top']
 for key in surface.parts_left:
-	if (key != 'top'):
-		surface_left_fusion = surface_left_fusion.fuse(surface.parts_left[key])
+    if (key != 'top'):
+        surface_left_fusion = surface_left_fusion.fuse(surface.parts_left[key])
 
 doc.addObject("Part::Feature","work surface left").Shape = surface_left_fusion
 
@@ -98,7 +98,7 @@ doc.addObject('Drawing::FeaturePage','Page2')
 
 pathDrawingTemplate = '/home/sam/programmierung/FreeCAD/A3_Landscape_ISO7200_worksurface_left.svg'
 if !os.path.isfile(pathDrawingTemplate):
-	pathDrawingTemplate =  App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
+    pathDrawingTemplate =  App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
 
 doc.Page2.Template = pathDrawingTemplate
 
@@ -107,24 +107,24 @@ doc.addObject('Drawing::FeatureViewPart','ViewZ2Top')
 doc.addObject('Drawing::FeatureViewPart','ViewZ2Bottom')
 doc.addObject('Drawing::FeatureViewPart','ViewIso2')
 
-Views 		   = [ doc.ViewY2, doc.ViewZ2Top, doc.ViewZ2Bottom, doc.ViewIso2] 
+Views          = [ doc.ViewY2, doc.ViewZ2Top, doc.ViewZ2Bottom, doc.ViewIso2] 
 ViewsDirection = [   (0,-1,0),       (0,0,1),     (0,0,-1),     (1,-1,0.5)]
-ViewsX		   = [     30.0,          30.0,         30.0,         275.0]
-ViewsY		   = [    350.0,         150.0,        350.0, 		  175.0]
-ViewsScale     = [		0.2,		   0.2,          0.2,			0.1]
-ViewsRotation  = [     90.0,           0.0,        180.0,		  180.0]
-ViewsHiddenL   = [     True,		  True,    		True,		   True]
+ViewsX         = [     30.0,          30.0,         30.0,         275.0]
+ViewsY         = [    350.0,         150.0,        350.0,         175.0]
+ViewsScale     = [      0.2,           0.2,          0.2,           0.1]
+ViewsRotation  = [     90.0,           0.0,        180.0,         180.0]
+ViewsHiddenL   = [     True,          True,         True,          True]
 
 for i in range(len(Views)):
-	Views[i].Source	   = doc.work_surface_left
-	Views[i].Direction = ViewsDirection[i]
-	Views[i].X         = ViewsX[i]
-	Views[i].Y         = ViewsY[i]
-	Views[i].Scale     = ViewsScale[i]
-	Views[i].Rotation  = ViewsRotation[i]
-	Views[i].ShowHiddenLines = ViewsHiddenL[i] 
+    Views[i].Source    = doc.work_surface_left
+    Views[i].Direction = ViewsDirection[i]
+    Views[i].X         = ViewsX[i]
+    Views[i].Y         = ViewsY[i]
+    Views[i].Scale     = ViewsScale[i]
+    Views[i].Rotation  = ViewsRotation[i]
+    Views[i].ShowHiddenLines = ViewsHiddenL[i] 
 
-	doc.Page2.addObject(Views[i])
+    doc.Page2.addObject(Views[i])
 
 doc.recompute()
 Gui.activeDocument().getObject("Page2").show()
@@ -135,8 +135,8 @@ Gui.activeDocument().getObject("Page2").show()
 
 surface_right_fusion = surface.parts_right['top']
 for key in surface.parts_right:
-	if (key != 'top'):
-		surface_right_fusion = surface_right_fusion.fuse(surface.parts_right[key])
+    if (key != 'top'):
+        surface_right_fusion = surface_right_fusion.fuse(surface.parts_right[key])
 
 doc.addObject("Part::Feature","work surface right").Shape = surface_right_fusion
 
@@ -145,7 +145,7 @@ doc.addObject('Drawing::FeaturePage','Page3')
 
 pathDrawingTemplate = '/home/sam/programmierung/FreeCAD/A3_Landscape_ISO7200_worksurface_right.svg'
 if !os.path.isfile(pathDrawingTemplate):
-	pathDrawingTemplate =  App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
+    pathDrawingTemplate =  App.getResourceDir()+'Mod/Drawing/Templates/A3_Landscape_ISO7200.svg'
 
 doc.Page3.Template = pathDrawingTemplate
 
@@ -154,24 +154,24 @@ doc.addObject('Drawing::FeatureViewPart','ViewZ3Top')
 doc.addObject('Drawing::FeatureViewPart','ViewZ3Bottom')
 doc.addObject('Drawing::FeatureViewPart','ViewIso3')
 
-Views 		   = [ doc.ViewY3, doc.ViewZ3Top, doc.ViewZ3Bottom, doc.ViewIso3] 
+Views          = [ doc.ViewY3, doc.ViewZ3Top, doc.ViewZ3Bottom, doc.ViewIso3] 
 ViewsDirection = [   (0,-1,0),       (0,0,1),     (0,0,-1),     (1,-1,0.5)]
-ViewsX		   = [   -280.0,        -280.0,       -280.0,         170.0]
-ViewsY		   = [    340.0,         140.0,        350.0, 		  150.0]
-ViewsScale     = [		0.2,		   0.2,          0.2,			0.1]
-ViewsRotation  = [     90.0,           0.0,        180.0,		  180.0]
-ViewsHiddenL   = [     True,		  True,    		True,		   True]
+ViewsX         = [   -280.0,        -280.0,       -280.0,         170.0]
+ViewsY         = [    340.0,         140.0,        350.0,         150.0]
+ViewsScale     = [      0.2,           0.2,          0.2,           0.1]
+ViewsRotation  = [     90.0,           0.0,        180.0,         180.0]
+ViewsHiddenL   = [     True,          True,         True,          True]
 
 for i in range(len(Views)):
-	Views[i].Source	   = doc.work_surface_right
-	Views[i].Direction = ViewsDirection[i]
-	Views[i].X         = ViewsX[i]
-	Views[i].Y         = ViewsY[i]
-	Views[i].Scale     = ViewsScale[i]
-	Views[i].Rotation  = ViewsRotation[i]
-	Views[i].ShowHiddenLines = ViewsHiddenL[i] 
+    Views[i].Source    = doc.work_surface_right
+    Views[i].Direction = ViewsDirection[i]
+    Views[i].X         = ViewsX[i]
+    Views[i].Y         = ViewsY[i]
+    Views[i].Scale     = ViewsScale[i]
+    Views[i].Rotation  = ViewsRotation[i]
+    Views[i].ShowHiddenLines = ViewsHiddenL[i] 
 
-	doc.Page3.addObject(Views[i])
+    doc.Page3.addObject(Views[i])
 
 doc.recompute()
 Gui.activeDocument().getObject("Page3").show()
